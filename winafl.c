@@ -475,7 +475,7 @@ pre_loop_start_handler(void *wrapcxt, INOUT void **user_data)
 			else {
 				char errorMessage[] = "unrecognized command received over pipe: ";
 				errorMessage[sizeof(errorMessage)-2] = command;
-				DR_ASSERT_MSG(false, errorMessage);
+				DUMPERROR(false, errorMessage);
 			}
 		}
 	}
@@ -515,7 +515,7 @@ pre_fuzz_handler(void *wrapcxt, INOUT void **user_data)
             if(command == 'Q') {
                 dr_exit_process(0);
             } else {
-                DR_ASSERT_MSG(false, "unrecognized command received over pipe");
+                DUMPERROR(false, "unrecognized command received over pipe");
             }
         }
     } else {
@@ -677,7 +677,7 @@ event_module_load(void *drcontext, const module_data_t *info, bool loaded)
                     drsym_lookup_symbol(info->full_path, options.fuzz_method, (size_t *)(&to_wrap), 0);
                     drsym_exit();
 #endif
-                    DR_ASSERT_MSG(to_wrap, "Can't find specified method in fuzz_module");                
+                    DUMPERROR(to_wrap, "Can't find specified method in fuzz_module");                
                     to_wrap += (size_t)info->start;
                 }
             }
@@ -799,7 +799,7 @@ setup_pipe() {
          0,              // default attributes
          NULL);          // no template file
 
-    if (pipe == INVALID_HANDLE_VALUE) DR_ASSERT_MSG(false, "error connecting to pipe");
+    if (pipe == INVALID_HANDLE_VALUE) DUMPERROR(false, "error connecting to pipe");
 }
 
 static void
@@ -811,7 +811,7 @@ setup_shmem() {
                    FALSE,                 // do not inherit the name
                    options.shm_name);            // name of mapping object
 
-   if (map_file == NULL) DR_ASSERT_MSG(false, "error accesing shared memory");
+   if (map_file == NULL) DUMPERROR(false, "error accesing shared memory");
 
    winafl_data.afl_area = (unsigned char *) MapViewOfFile(map_file, // handle to map object
                FILE_MAP_ALL_ACCESS,  // read/write permission
@@ -819,7 +819,7 @@ setup_shmem() {
                0,
                MAP_SIZE);
 
-   if (winafl_data.afl_area == NULL) DR_ASSERT_MSG(false, "error accesing shared memory");
+   if (winafl_data.afl_area == NULL) DUMPERROR(false, "error accesing shared memory");
 }
 
 static void
@@ -1006,7 +1006,7 @@ dr_client_main(client_id_t id, int argc, const char *argv[])
     if(options.coverage_kind == COVERAGE_EDGE || options.thread_coverage || options.dr_persist_cache) {
         winafl_tls_field = drmgr_register_tls_field();
         if(winafl_tls_field == -1) {
-            DR_ASSERT_MSG(false, "error reserving TLS field");
+            DUMPERROR(false, "error reserving TLS field");
         }
         drmgr_register_thread_init_event(event_thread_init);
         drmgr_register_thread_exit_event(event_thread_exit);

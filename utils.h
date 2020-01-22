@@ -39,6 +39,7 @@ http://dynamorio.org/
 #ifndef CLIENTS_COMMON_UTILS_H_
 #define CLIENTS_COMMON_UTILS_H_
 
+#define DUMPERROR(x, msg) /* nothing */
 #include "dr_api.h"
 
 #ifdef DEBUG
